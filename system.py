@@ -33,7 +33,7 @@ class System:
             self.system_rule.tf(
 
                 self.get_latest_gen(),
-                self.system_rule.tfargs[0]
+                self.system_rule.tfargs
 
             )
 

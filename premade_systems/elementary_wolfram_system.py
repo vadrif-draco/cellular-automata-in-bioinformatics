@@ -2,13 +2,8 @@ from grid import Grid
 from cell import Cell, CellState
 
 
-class State(CellState):
-    def __init__(self, value: int) -> None:
-        super().__init__(value)
-
-
 ALLOWED_DIMENSIONALITIES = [1]
-INITIAL_CELL_STATE = State(0)
+INITIAL_CELL_STATE = CellState(0)
 RULE_000 = "00000000"
 RULE_001 = "00000001"
 RULE_002 = "00000010"
@@ -270,7 +265,7 @@ RULE_255 = "11111111"
 def tf(*tfargs) -> Grid:
 
     prev_gen_grid: Grid = tfargs[0]
-    wolfram_rule: str = tfargs[1]
+    wolfram_rule: str = tfargs[1][0]
 
     next_gen_grid: Grid = Grid(dimensions=prev_gen_grid.dimensions)
 
@@ -298,11 +293,11 @@ def tf(*tfargs) -> Grid:
         cell_value = int(wolfram_rule[-(rule_char + 1)])
 
         # Finally, create a new cell with the State object initialized with the value from the wolfram rule
-        next_gen_cell = Cell(State(cell_value))
+        next_gen_cell = Cell(CellState(cell_value))
 
         # And add it to the grid ONLY IF its state is not the initial state (since un-added cells are initial by default)
         # Remove this if you want your zeroes to appear
-        # if next_gen_cell.state.value != INITIAL_CELL_STATE.value:
-        next_gen_grid.add_cell_at(next_gen_cell, (location,))
+        if next_gen_cell.state.value != INITIAL_CELL_STATE.value:
+            next_gen_grid.add_cell_at(next_gen_cell, (location,))
 
     return next_gen_grid

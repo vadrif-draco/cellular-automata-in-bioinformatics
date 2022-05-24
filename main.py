@@ -36,7 +36,7 @@ print()
 
 g_test = Grid(dimensions=(27,))
 
-c_test = Cell(ews.State(value=1))
+c_test = Cell(CellState(value=1))
 
 g_test.add_cell_at(c_test, (0,))
 # g_test.add_cell_at(c_test, (12,))
