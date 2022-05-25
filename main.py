@@ -77,14 +77,16 @@ s_test.get_next_gen().visualize()
 
 pdg_test = Grid(dimensions=(21,))
 pdc_test = Cell(CellState(value='Y'))
+pdc2_test = Cell(CellState(value='X'))
 pdg_test.add_cell_at(pdc_test, (10,))
+pdg_test.add_cell_at(pdc2_test, (11,))
 
 
 
 pdsr_test = SystemRule(pd.ALLOWED_DIMENSIONALITIES,
                        pd.tf, 
                        pd.F2B, 
-                       pd.F2B)
+                       pd.B2F)
 
 pds_test = System(gen0=pdg_test, system_rule=pdsr_test)
 pds_test.get_latest_gen().visualize()
