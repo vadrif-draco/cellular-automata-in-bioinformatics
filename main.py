@@ -2,6 +2,7 @@ from cell import Cell, CellState
 from grid import Grid
 from system import System, SystemRule
 from premade_systems import elementary_wolfram_system as ews
+from premade_systems import protein_domain_evolution_system as pd
 
 
 g = Grid(dimensions=(5, 10))
@@ -71,3 +72,35 @@ s_test.get_next_gen().visualize()
 s_test.get_next_gen().visualize()
 s_test.get_next_gen().visualize()
 s_test.get_next_gen().visualize()
+
+################################################################################################
+
+pdg_test = Grid(dimensions=(21,))
+pdc_test = Cell(CellState(value='Y'))
+pdg_test.add_cell_at(pdc_test, (10,))
+
+
+
+pdsr_test = SystemRule(pd.ALLOWED_DIMENSIONALITIES,
+                       pd.tf, 
+                       pd.F2B, 
+                       pd.F2B)
+
+pds_test = System(gen0=pdg_test, system_rule=pdsr_test)
+pds_test.get_latest_gen().visualize()
+pds_test.get_next_gen().visualize()
+pds_test.get_next_gen().visualize()
+pds_test.get_next_gen().visualize()
+pds_test.get_next_gen().visualize()
+pds_test.get_next_gen().visualize()
+pds_test.get_next_gen().visualize()
+pds_test.get_next_gen().visualize()
+pds_test.get_next_gen().visualize()
+pds_test.get_next_gen().visualize()
+pds_test.get_next_gen().visualize()
+pds_test.get_next_gen().visualize()
+pds_test.get_next_gen().visualize()
+pds_test.get_next_gen().visualize()
+pds_test.get_next_gen().visualize()
+pds_test.get_next_gen().visualize()
+pds_test.get_next_gen().visualize()

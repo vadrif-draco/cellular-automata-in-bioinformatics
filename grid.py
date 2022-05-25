@@ -47,6 +47,13 @@ class Grid:
         self.add_cell_at(cell1, self.get_cell_location(cell2))
         self.add_cell_at(cell2, self.get_cell_location(cell1))
 
+    def copy(self) -> 'Grid':
+        grid_copy: Grid = Grid(dimensions=self.dimensions)
+        for cell in self.cells.items():
+            grid_copy.cells[cell[0]] = cell[1].copy()
+
+        return grid_copy
+
     # TODO: To be implemented with proper GUI
     # TODO: Visualize based on number of dimensions, 1D, 2D, 3D, and any further could be CLIed or something
     # FIXME: Can't handle negative indices
