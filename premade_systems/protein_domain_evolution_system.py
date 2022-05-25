@@ -4,41 +4,53 @@ from cell import Cell, CellState
 import random
 
 ALLOWED_DIMENSIONALITIES = [1]
-INITIAL_CELL_STATE = CellState("Φ") # XXX: y no use?
+INITIAL_CELL_STATE = CellState('Φ') # XXX: y no use?
 
 F2B = {
     'X': {
+        'α': 0.3,
         'X': 0.1,
         'Y': 0.6,
-        'Z': 0.4
+        'Z': 0.4,
+        'Ω': 0.2
     },
     'Y': {
+        'α': 0.5,
         'X': 0.6,
         'Y': 0.3,
-        'Z': 0.7
+        'Z': 0.7,
+        'Ω': 0.3
     },
     'Z': {
+        'α': 0.2,
         'X': 0.2,
         'Y': 0.1,
-        'Z': 0.3
+        'Z': 0.3,
+        'Ω': 0.3
     }
 }
 
 B2F = {
     'X': {
+        'α': 0.3,
         'X': 0.1,
         'Y': 0.3,
-        'Z': 0.2
+        'Z': 0.2,
+        'Ω': 0.2
     },
     'Y': {
+        'α': 0.5,
         'X': 0.6,
         'Y': 0.3,
-        'Z': 0.1
+        'Z': 0.1,
+        'Ω': 0.3
     },
     'Z': {
+        'α': 0.2,
         'X': 0.4,
         'Y': 0.7,
-        'Z': 0.3
+        'Z': 0.3,
+        'Ω': 0.3
     }
 }
 
@@ -53,14 +65,12 @@ def tf(*tfargs) -> Grid:
     left = min(prev_gen_grid.cells.keys(), key=lambda key : key[0])
     right = max(prev_gen_grid.cells.keys(), key=lambda key : key[0])
 
-    # TODO: If we reach start, stop
-    if left[0] > 0:
+    if left[0] > 0 and prev_gen_grid.cells[left].state.value != 'α':
         prev_gen_left_cell = prev_gen_grid.cells[left]
         next_gen_left_cell = __roulette_select_cell(f2b[prev_gen_left_cell.state.value])
         next_gen_grid.add_cell_at(next_gen_left_cell, ((left[0] - 1),))
 
-    # TODO: If we reach end, stop
-    if right[0] < prev_gen_grid.dimensions[0] - 1:
+    if right[0] < prev_gen_grid.dimensions[0] - 1 and prev_gen_grid.cells[right].state.value != 'Ω':
         prev_gen_right_cell = prev_gen_grid.cells[right]
         next_gen_right_cell = __roulette_select_cell(b2f[prev_gen_right_cell.state.value])
         next_gen_grid.add_cell_at(next_gen_right_cell, ((right[0] + 1),))
