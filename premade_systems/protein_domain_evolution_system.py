@@ -1,11 +1,12 @@
+import random
 from cmath import inf
-from typing import Dict, List, TextIO, Tuple
+from typing import TextIO, Tuple
 from grid import Grid
 from cell import Cell, CellState
-import random
 
 ALLOWED_DIMENSIONALITIES = [1]
-INITIAL_CELL_STATE = CellState('Φ') # XXX: y no use?
+INITIAL_CELL_STATE = CellState('Φ')  # XXX: y no use?
+
 
 class ProteinSequence:
     def __init__(self, header: str, sequence: str) -> None:
@@ -61,16 +62,17 @@ B2F = {
     }
 }
 
+
 def tf(*tfargs) -> Grid:
 
     prev_gen_grid: Grid = tfargs[0]
-    f2b: Dict[str, Dict[str, float]] = tfargs[1][0]
-    b2f: Dict[str, Dict[str, float]] = tfargs[1][1]
+    f2b: dict[str, dict[str, float]] = tfargs[1][0]
+    b2f: dict[str, dict[str, float]] = tfargs[1][1]
 
     next_gen_grid: Grid = prev_gen_grid.copy()
 
-    left = min(prev_gen_grid.cells.keys(), key=lambda key : key[0])
-    right = max(prev_gen_grid.cells.keys(), key=lambda key : key[0])
+    left = min(prev_gen_grid.cells.keys(), key=lambda key: key[0])
+    right = max(prev_gen_grid.cells.keys(), key=lambda key: key[0])
 
     if left[0] > 0 and prev_gen_grid.cells[left].state.value != 'α':
         prev_gen_left_cell = prev_gen_grid.cells[left]
@@ -85,10 +87,10 @@ def tf(*tfargs) -> Grid:
     return next_gen_grid
 
 
-def __roulette_select_cell(rule_population_matrix: Dict[str, float]) -> Cell:
+def __roulette_select_cell(rule_population_matrix: dict[str, float]) -> Cell:
     population_fitness = sum(rule_population_matrix.values())
-    probabilities = [domain_fitness/population_fitness for domain_fitness in rule_population_matrix.values()]
-    
+    probabilities = [domain_fitness / population_fitness for domain_fitness in rule_population_matrix.values()]
+
     roulette_selection = random.choices(list(rule_population_matrix.keys()), weights=probabilities)
 
     return Cell(CellState(roulette_selection[0]))
@@ -100,14 +102,14 @@ def parse_fasta_file(fasta_file: TextIO) -> list[ProteinSequence]:
     for line in fasta_file:
         if line[0] == '>':
             if index >= 1:
-                seqs.append(seq)
-            index+=1
+                seqs.append(ProteinSequence(header, seq))
+            index += 1
             header = line[1:]
             seq = []
         else:
             seq += line[:-1]
 
-    seqs.append(ProteinSequence(header, seq))
+    seqs.append(ProteinSequence(header, ''.join(seq)))
 
     return seqs
 
@@ -116,7 +118,7 @@ def protein_to_domains(protein: ProteinSequence, domains: list[str]) -> list[str
     # Note:
     # The implementation of this function is currently very subjective and depends
     # on our own intrepretation. Normally, the domains would've been chosen using
-    # other algorithms and machine learning. For example, the original paper suggests 
+    # other algorithms and machine learning. For example, the original paper suggests
     # using HMMER and Pfam databases. Also another method would be to use DomainWorld
     # https://domainworld.uni-muenster.de/
     seq = protein.sequence
@@ -131,7 +133,7 @@ def protein_to_domains(protein: ProteinSequence, domains: list[str]) -> list[str
                 min_domain = domain
             elif index == min_index:
                 min_domain = min(min_domain, domain)
-        
+
         if min_domain == '':
             break
 
@@ -140,16 +142,16 @@ def protein_to_domains(protein: ProteinSequence, domains: list[str]) -> list[str
 
     if len(seq) != 0:
         protein_domains.append(seq)
-    
+
     return protein_domains
 
 
 def calculate_probabilities(protein_domains: list[list[ProteinSequence]], possible_domains: list[str])\
-                            -> Tuple[Dict[str, Dict[str, float]], Dict[str, Dict[str, float]]]:
+        -> Tuple[dict[str, dict[str, float]], dict[str, dict[str, float]]]:
     # Note:
     # The implementation of this function is currently very subjective and depends
     # on our own intrepretation. Normally, the domains would've been chosen using
-    # other algorithms and machine learning. For example, the original paper suggests 
+    # other algorithms and machine learning. For example, the original paper suggests
     # using HMMER and Pfam databases. Also another method would be to use DomainWorld
     # https://domainworld.uni-muenster.de/
     # Here, we use the existing sequences as our training set to calculate probabilities.
@@ -158,16 +160,17 @@ def calculate_probabilities(protein_domains: list[list[ProteinSequence]], possib
     b2f = {}
 
     for domain in possible_domains:
+        occurrences[domain] = 0
         f2b[domain] = dict.fromkeys(possible_domains, 0.01)
         b2f[domain] = dict.fromkeys(possible_domains, 0.01)
 
-    for domains in protein_domains:        
+    for domains in protein_domains:
         for domain in range(len(domains) - 1):
             occurrences[domains[domain]] += 1
             f2b[domains[domain]][domains[domain + 1]] += 1
             b2f[domains[domain + 1]][domains[domain]] += 1
-    
-    for domains in protein_domains:        
+
+    for domains in protein_domains:
         for domain in range(len(domains) - 1):
             f2b[domains[domain]][domains[domain + 1]] /= occurrences[domains[domain]]
             b2f[domains[domain + 1]][domains[domain]] /= occurrences[domains[domain]]
