@@ -105,11 +105,11 @@ def parse_fasta_file(fasta_file: TextIO) -> list[ProteinSequence]:
                 seqs.append(ProteinSequence(header, seq))
             index += 1
             header = line[1:]
-            seq = []
+            seq = ''
         else:
             seq += line[:-1]
 
-    seqs.append(ProteinSequence(header, ''.join(seq)))
+    seqs.append(ProteinSequence(header, seq))
 
     return seqs
 
