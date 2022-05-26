@@ -18,7 +18,7 @@ def int_to_bin(num):
 
 def visualize(grid, current_grid_depth):
     for cell in grid.cells.keys():
-        graph.DrawRectangle((cell[0] * SQUARE_SIZE, current_grid_depth * SQUARE_SIZE),
+        graph.draw_rectangle((cell[0] * SQUARE_SIZE, current_grid_depth * SQUARE_SIZE),
                             (cell[0] * SQUARE_SIZE - SQUARE_SIZE, current_grid_depth * SQUARE_SIZE + SQUARE_SIZE),
                             line_color="black",
                             fill_color="black")
@@ -61,7 +61,7 @@ while True:  # Event Loop
                                  ews.tf, int_to_bin(int(values['-IN-'])))
 
             s_test = System(gen0=g_test, system_rule=sr_test)
-            # graph.DrawLine((CANVAS_WIDTH // 2, 0),
+            # graph.draw_line((CANVAS_WIDTH // 2, 0),
             #                (CANVAS_WIDTH // 2, CANVAS_HEIGHT),
             #                color="black",
             #                width=3)
