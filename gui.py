@@ -9,7 +9,9 @@ NO_OF_GENS = 40
 SQUARE_SIZE = 400 // NO_OF_GENS
 # SQUARE_SIZE = 10
 CANVAS_HEIGHT = NO_OF_GENS * SQUARE_SIZE
-CANVAS_WIDTH = (2 * NO_OF_GENS - 1) * SQUARE_SIZE + 1 if ((400 // NO_OF_GENS) % 2 == 0) else (2 * NO_OF_GENS - 1) * SQUARE_SIZE
+CANVAS_WIDTH = (2 * NO_OF_GENS - 1) * SQUARE_SIZE + 1 \
+               if ((400 // NO_OF_GENS) % 2 == 0) else \
+               (2 * NO_OF_GENS - 1) * SQUARE_SIZE
 canvas_state = 'CLEAR'
 
 
@@ -39,10 +41,34 @@ def clear_canvas():
     g_test = Grid(dimensions=(2 * NO_OF_GENS + 1,))
 
 
+def update_no_of_gens(value):
+    global NO_OF_GENS
+    global SQUARE_SIZE
+    global CANVAS_HEIGHT
+    global CANVAS_WIDTH
+
+    NO_OF_GENS = value
+    SQUARE_SIZE = 400 // NO_OF_GENS
+    current_grid_depth = 0
+    graph.erase()
+    for gen in s_test.generations:
+        visualize(gen, current_grid_depth)
+        current_grid_depth += 1
+
+
 sg.theme('Dark Blue 3')
 
 layout = [[sg.Text('Enter rule number you wish to view: ')],
           [sg.Input(key='-IN-'), sg.Button('Enter'), sg.Button('Clear')],
+          [sg.Text('Number of generations: '),
+           sg.Slider(range=(1, 100),
+                     default_value=40,
+                     resolution=1,
+                     orientation='h',
+                     enable_events=True,
+                     trough_color="white",
+                     key="slider",
+                     )],
           [
               sg.Graph(
                   canvas_size=(CANVAS_WIDTH, CANVAS_HEIGHT),
@@ -124,6 +150,10 @@ while True:  # Event Loop
                 grid_depth += 1
 
             canvas_state = 'DRAWN'
+
+    if event == 'slider':
+        clear_canvas()
+        update_no_of_gens(int(values['slider']))
 
     if event == 'Clear':
         clear_canvas()
